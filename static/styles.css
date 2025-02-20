@@ -3,3 +3,37 @@ body {
     text-align: center;
     margin-top: 50px;
 }
+form {
+    margin: 20px auto;
+    max-width: 300px;
+}
+input[type="text"], input[type="password"] {
+    padding: 5px;
+    margin: 5px;
+}
+input[type="submit"] {
+    padding: 5px 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+a {
+    margin: 0 5px;
+}
+#timer {
+    font-size: 48px;
+    margin: 20px;
+}
+button {
+    padding: 10px 20px;
+    margin: 5px;
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}

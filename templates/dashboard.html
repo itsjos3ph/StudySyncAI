@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - StudySync AI</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script src="/static/timer.js"></script>
+</head>
+<body>
+    <h1>Welcome, {{ username }}!</h1>
+    <h2>Pomodoro Timer</h2>
+    <div id="timer">25:00</div>
+    <button id="startBtn">Start</button>
+    <button id="pauseBtn" disabled>Pause</button>
+    <button id="resetBtn">Reset</button>
+    <p>This is where your study tools will live!</p>
+    <a href="{{ url_for('logout') }}">Log Out</a>
+</body>
+</html>
