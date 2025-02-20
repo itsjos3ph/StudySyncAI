@@ -1,11 +1,13 @@
+import os
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-here'  # Change this later
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'  # Root folder
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(BASE_DIR, "database.db")}'
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
@@ -57,6 +59,10 @@ def login():
 @login_required
 def dashboard():
     return render_template('dashboard.html', username=current_user.username)
+
+@app.route('/test')
+def test():
+    return "This is a test page"
 
 @app.route('/logout')
 @login_required
