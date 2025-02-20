@@ -3,16 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <title>Dashboard - StudySync AI</title>
-    <link rel="stylesheet" href="/static/styles.css">
-    <script src="/static/timer.js"></script>
+    <link rel="stylesheet" href="/static/styles.css"> <!-- Link to your existing CSS -->
+    <script src="/static/timer.js" defer></script>
 </head>
 <body>
     <h1>Welcome, {{ username }}!</h1>
-    <h2>Pomodoro Timer</h2>
-    <div id="timer">25:00</div>
+    <h2>Study Timer</h2>
+    
+    <label for="customTime">Set Custom Time (minutes):</label>
+    <input type="number" id="customTime" min="1" value="25"> <!-- Input for custom timer -->
+    <button id="setTimeBtn">Set Timer</button> <!-- Button to set the timer -->
+
+    <div id="timer">25:00</div> <!-- Timer display -->
     <button id="startBtn">Start</button>
     <button id="pauseBtn" disabled>Pause</button>
     <button id="resetBtn">Reset</button>
+    
     <p>This is where your study tools will live!</p>
     <a href="{{ url_for('logout') }}">Log Out</a>
 </body>

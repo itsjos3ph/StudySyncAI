@@ -34,13 +34,15 @@ def signup():
         if User.query.filter_by(username=username).first():
             flash('Username already exists!')
             return redirect(url_for('signup'))
-        hashed_password = generate_password_hash(password, method='sha256')
+        # Remove method='sha256' to use the default hashing method
+        hashed_password = generate_password_hash(password)  
         new_user = User(username=username, password=hashed_password)
         db.session.add(new_user)
         db.session.commit()
         flash('Signup successful! Please log in.')
         return redirect(url_for('login'))
     return render_template('signup.html')
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
