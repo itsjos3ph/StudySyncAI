@@ -1,39 +1,137 @@
+/* General Page Styling */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Courier New', monospace;
     text-align: center;
-    margin-top: 50px;
+    background: #f4f4f4;
+    color: #333;
+    margin: 0;
+    padding: 20px;
 }
-form {
-    margin: 20px auto;
-    max-width: 300px;
+
+h1, h2 {
+    color: #333;
 }
-input[type="text"], input[type="password"] {
-    padding: 5px;
-    margin: 5px;
+
+/* Header */
+.header {
+    max-width: 600px;
+    display: flex;
+    justify-content: space-between;
+    margin: auto;
+    padding: 10px 20px;
+    border-bottom: 2px solid #ccc;
 }
-input[type="submit"] {
-    padding: 5px 10px;
-    background-color: #4CAF50;
+.header-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+.header-user {
+    font-size: 1rem;
+}
+.header-user button {
+    background: #d9534f;
     color: white;
     border: none;
+    padding: 5px 10px;
     cursor: pointer;
+    border-radius: 5px;
+    transition: background 0.3s;
 }
-a {
-    margin: 0 5px;
+.header-user button:hover {
+    background: #dc3545;
+}
+
+/* Study Time Section */
+.study-time {
+    max-width: 350px;
+    margin: 20px auto;
+    background: #ddd;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+#customTime {
+    width: 120px;
+    padding: 8px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    background: #fff;
+    color: #333;
+    border: 1px solid #ccc;
 }
 #timer {
-    font-size: 48px;
-    margin: 20px;
+    max-width: 200px;
+    font-size: 3rem;
+    font-weight: bold;
+    margin: 20px auto;
+    background: #fff;
+    padding: 15px;
+    border-radius: 10px;
 }
-button {
-    padding: 10px 20px;
-    margin: 5px;
-    background-color: #2196F3;
+.timer-buttons {
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid #bbb;
+    padding-top: 10px;
+}
+.timer-buttons button {
+    padding: 10px 15px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background: #007bff;
+    color: white;
+    transition: background 0.3s;
+}
+.timer-buttons button:hover {
+    background: #0056b3;
+}
+#startPauseBtn {
+    background: #28a745;
+}
+#resetBtn {
+    background: #dc3545;
+    color: white;
+}
+
+/* Task Manager Section */
+.task-container {
+    max-width: 400px;
+    margin: 20px auto;
+    background: #ddd;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+.task-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background: #fff;
+}
+.task-list li {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #333;
+}
+.task-list li:last-child {
+    border-bottom: none;
+}
+.task-list button {
+    background: #dc3545;
     color: white;
     border: none;
+    padding: 5px 10px;
     cursor: pointer;
+    border-radius: 5px;
+    transition: background 0.3s;
 }
-button:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
+.task-list button:hover {
+    background: #a00;
 }

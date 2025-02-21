@@ -18,6 +18,12 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
 
+# Task model
+class Task(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -34,7 +40,6 @@ def signup():
         if User.query.filter_by(username=username).first():
             flash('Username already exists!')
             return redirect(url_for('signup'))
-        # Remove method='sha256' to use the default hashing method
         hashed_password = generate_password_hash(password)  
         new_user = User(username=username, password=hashed_password)
         db.session.add(new_user)
@@ -42,7 +47,6 @@ def signup():
         flash('Signup successful! Please log in.')
         return redirect(url_for('login'))
     return render_template('signup.html')
-
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -60,11 +64,26 @@ def login():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template('dashboard.html', username=current_user.username)
+    tasks = Task.query.filter_by(user_id=current_user.id).all()
+    return render_template('dashboard.html', username=current_user.username, tasks=tasks)
 
-@app.route('/test')
-def test():
-    return "This is a test page"
+@app.route('/add_task', methods=['POST'])
+@login_required
+def add_task():
+    title = request.form['title']
+    new_task = Task(title=title, user_id=current_user.id)
+    db.session.add(new_task)
+    db.session.commit()
+    return redirect(url_for('dashboard'))
+
+@app.route('/delete_task/<int:task_id>', methods=['POST'])
+@login_required
+def delete_task(task_id):
+    task = Task.query.get(task_id)
+    if task and task.user_id == current_user.id:
+        db.session.delete(task)
+        db.session.commit()
+    return redirect(url_for('dashboard'))
 
 @app.route('/logout')
 @login_required
