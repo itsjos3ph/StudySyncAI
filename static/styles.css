@@ -13,6 +13,17 @@ h1, h2 {
     font-size: 1.2rem;
 }
 
+/* Notification Box */
+.notification-box {
+    color: #333;
+    background: #c0c0c0;
+    padding: 10px;
+    border: 2px outset #d7d7d7;
+    margin: 10px auto;
+    max-width: 600px;
+    text-align: center;
+}
+
 /* Header */
 header.header {
     max-width: 600px;
@@ -30,20 +41,21 @@ header.header {
     font-size: 1rem;
 }
 .logout-btn {
-    background: #d9534f;
+    background: #dc3545;
     color: white;
+    border: 2px outset #d7d7d7;
     padding: 5px 10px;
     text-decoration: none;
     border-radius: 5px;
     transition: background 0.3s;
 }
 .logout-btn:hover {
-    background: #dc3545;
+    background: #a00;
 }
 
 /* Study Time Section */
 .study-time {
-    max-width: 400px;
+    max-width: 450px;
     margin: 20px auto;
     background: #c0c0c0;
     padding: 25px;
@@ -57,7 +69,7 @@ header.header {
     background: #fff;
     padding: 20px;
     border: 2px inset #d7d7d7;
-    width: 200px;
+    width: 250px;
 }
 .timer-buttons {
     display: flex;
@@ -84,9 +96,8 @@ header.header {
 
 /* Custom Time Section */
 .custom-time {
-    max-width: 400px;
+    max-width: 600px;
     margin: 40px auto 20px auto;
-    padding: 15px;
 }
 #customTime {
     width: 120px;
@@ -116,8 +127,9 @@ header.header {
 
 /* Task Manager Section */
 .task-manager {
-    max-width: 400px;
+    max-width: 600px;
     margin: 20px auto;
+    padding-top: 20px;
 }
 .task-container {
     background: #c0c0c0;
@@ -137,8 +149,7 @@ header.header {
     padding: 10px;
     border-bottom: 1px solid #ccc;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     color: #333;
 }
 .task-list li:last-child {
@@ -148,15 +159,34 @@ header.header {
     color: #666;
     font-style: italic;
 }
-.task-title {
+.task-details {
     flex: 1;
-    max-width: 60%; /* Adjusted for priority */
+    min-width: 0;
+    text-align: left;
+}
+.task-title {
+    display: inline;
     word-wrap: break-word;
     overflow-wrap: break-word;
+    font-weight: bold;
+    margin-right: 10px;
 }
-.task-priority {
-    margin-left: 10px;
+.task-due-date {
+    display: inline;
+    color: #555;
+    font-size: 0.9rem;
+}
+.task-description {
+    display: block;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
     color: #666;
+    font-size: 0.9rem;
+}
+.delete-form {
+    flex-shrink: 0;
+    display: inline;
+    margin-left: 10px;
 }
 .task-list button {
     background: #dc3545;
@@ -170,31 +200,58 @@ header.header {
 .task-list button:hover {
     background: #a00;
 }
-.task-manager form {
+.task-form {
     margin: 15px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    max-width: 600px;
+    justify-content: center;
+    padding-bottom: 20px;
 }
-.task-manager input[type="text"] {
-    width: 70%;
+.task-form input[type="text"],
+.task-form input[type="date"],
+.task-form input[type="time"] {
+    flex: 1;
+    min-width: 120px;
+    max-width: 200px;
     padding: 8px;
     border: 2px inset #d7d7d7;
     background: #fff;
+    box-sizing: border-box;
 }
-.task-manager button {
+.task-form button {
     padding: 8px 15px;
     border: 2px outset #d7d7d7;
     background: #c0c0c0;
     color: #000;
     cursor: pointer;
 }
-.task-manager button:hover {
+.task-form button:hover {
     background: #a9a9a9;
 }
-.mood-form {
-    margin: 15px 0;
+.sort-form {
+    margin-top: 10px;
+    text-align: left; /* Align left */
+    display: flex;
+    gap: 10px;
 }
-.mood-form select {
-    padding: 8px;
+.sort-form label {
+    font-size: 0.9rem;
+    padding-top: 8px;
+}
+.sort-form select {
+    padding: 6px;
     border: 2px inset #d7d7d7;
     background: #fff;
-    margin-right: 10px;
+}
+.sort-form button {
+    padding: 6px 12px;
+    border: 2px outset #d7d7d7;
+    background: #c0c0c0;
+    color: #000;
+    cursor: pointer;
+}
+.sort-form button:hover {
+    background: #a9a9a9;
 }

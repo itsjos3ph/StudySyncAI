@@ -7,13 +7,15 @@
     <script src="{{ url_for('static', filename='timer.js') }}"></script>
 </head>
 <body>
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% for message in messages %}
-                <p class="flash-message">{{ message }}</p>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
+    <div class="notification-box">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {{ messages[-1] }} <!-- Show only the latest message -->
+            {% else %}
+                Good luck on your studying! <!-- Default message -->
+            {% endif %}
+        {% endwith %}
+    </div>
     <header class="header">
         <div class="site-name">StudySync AI</div>
         <div class="user-info">
@@ -24,7 +26,7 @@
 
     <section class="study-time">
         <h2>Study Time</h2>
-        <div id="timer">25:00</div>
+        <div id="timer">{{ timer_default }}:00</div>
         <div class="timer-buttons">
             <button id="startBtn">Start</button>
             <button id="pauseBtn" disabled>Pause</button>
@@ -34,34 +36,39 @@
 
     <section class="custom-time">
         <h2>Set Custom Time</h2>
-        <input type="number" id="customTime" placeholder="Enter minutes">
-        <button id="setTimeBtn">Set Timer</button>
+        <form action="{{ url_for('set_timer_default') }}" method="post">
+            <input type="number" id="customTime" name="customTime" placeholder="Enter minutes" value="{{ timer_default }}">
+            <button type="submit" id="setTimeBtn">Set Timer</button>
+        </form>
     </section>
     <hr class="section-divider">
 
     <section class="task-manager">
         <h2>Task Manager</h2>
-        <form action="/add_task" method="post">
-            <input type="text" name="title" placeholder="Enter task" required>
+        <form action="/add_task" method="post" class="task-form">
+            <input type="text" name="title" placeholder="Task title (required)" required>
+            <input type="text" name="description" placeholder="Description">
+            <input type="date" id="due_date" name="due_date" placeholder="Due date (optional)">
+            <input type="time" id="due_time" name="due_time" placeholder="Due time (optional)">
             <button type="submit">Add Task</button>
-        </form>
-        <form action="/set_mood" method="post" class="mood-form">
-            <label>How’s your mood? (Current: {{ mood }})</label>
-            <select name="mood">
-                <option value="normal" {% if mood == "normal" %}selected{% endif %}>Normal</option>
-                <option value="stressed" {% if mood == "stressed" %}selected{% endif %}>Stressed</option>
-                <option value="tired" {% if mood == "tired" %}selected{% endif %}>Tired</option>
-            </select>
-            <button type="submit">Set Mood</button>
         </form>
         <div class="task-container">
             <ul class="task-list">
                 {% if tasks|length > 0 %}
                     {% for task in tasks %}
                         <li>
-                            <span class="task-title">{{ task.title }}</span>
-                            <span class="task-priority">[Priority: {{ task.priority }}]</span>
-                            <form action="/delete_task/{{ task.id }}" method="post" style="display:inline;">
+                            <div class="task-details">
+                                <span class="task-title">
+                                    {{ task.title }}
+                                    {% if task.due_datetime %}
+                                        <span class="task-due-date"> | Due: {{ task.due_datetime.strftime('%B %d, %Y %I:%M %p') }}</span>
+                                    {% endif %}
+                                </span>
+                                {% if task.description %}
+                                    <span class="task-description">{{ task.description }}</span>
+                                {% endif %}
+                            </div>
+                            <form action="/delete_task/{{ task.id }}" method="post" class="delete-form">
                                 <button type="submit">Delete</button>
                             </form>
                         </li>
@@ -71,6 +78,35 @@
                 {% endif %}
             </ul>
         </div>
+        <form action="{{ url_for('dashboard') }}" method="post" class="sort-form">
+            <label>Sort by:</label>
+            <select name="sort">
+                <option value="off" {% if sort_option == 'off' %}selected{% endif %}>Off</option>
+                <option value="due_date" {% if sort_option == 'due_date' %}selected{% endif %}>Due Date</option>
+            </select>
+            <button type="submit">Sort</button>
+        </form>
     </section>
+
+    <script>
+        // Auto-fill current date and time in task form
+        document.addEventListener("DOMContentLoaded", function () {
+            const now = new Date();
+            
+            // Set current date (YYYY-MM-DD format)
+            const dateInput = document.getElementById("due_date");
+            if (dateInput) {
+                dateInput.value = now.toISOString().split("T")[0];
+            }
+
+            // Set current time (HH:MM format)
+            const timeInput = document.getElementById("due_time");
+            if (timeInput) {
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                timeInput.value = `${hours}:${minutes}`;
+            }
+        });
+    </script>
 </body>
 </html>
