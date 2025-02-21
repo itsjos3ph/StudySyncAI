@@ -3,11 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>Dashboard - StudySync AI</title>
-    <link rel="stylesheet" href="/static/styles.css">
-    <script src="/static/timer.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="{{ url_for('static', filename='timer.js') }}"></script>
 </head>
 <body>
-
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <p class="flash-message">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
     <header class="header">
         <div class="site-name">StudySync AI</div>
         <div class="user-info">
@@ -16,34 +22,55 @@
         </div>
     </header>
 
-    <h2>Study Time</h2>
-    <div id="timer">25:00</div>
-    <button id="startBtn">Start</button>
-    <button id="pauseBtn" disabled>Pause</button>
-    <button id="resetBtn">Reset</button>
+    <section class="study-time">
+        <h2>Study Time</h2>
+        <div id="timer">25:00</div>
+        <div class="timer-buttons">
+            <button id="startBtn">Start</button>
+            <button id="pauseBtn" disabled>Pause</button>
+            <button id="resetBtn">Reset</button>
+        </div>
+    </section>
 
-    <h2>Set Custom Time</h2>
-    <input type="number" id="customTime" placeholder="Enter minutes">
-    <button id="setTimeBtn">Set Timer</button>
+    <section class="custom-time">
+        <h2>Set Custom Time</h2>
+        <input type="number" id="customTime" placeholder="Enter minutes">
+        <button id="setTimeBtn">Set Timer</button>
+    </section>
+    <hr class="section-divider">
 
-    <h2>Task Manager</h2>
-    <form action="/add_task" method="post">
-        <input type="text" name="title" placeholder="Enter task" required>
-        <button type="submit">Add Task</button>
-    </form>
-
-    <div class="task-container">
-        <ul class="task-list">
-            {% for task in tasks %}
-                <li>
-                    {{ task.title }}
-                    <form action="/delete_task/{{ task.id }}" method="post" style="display:inline;">
-                        <button type="submit">Delete</button>
-                    </form>
-                </li>
-            {% endfor %}
-        </ul>
-    </div>
-
+    <section class="task-manager">
+        <h2>Task Manager</h2>
+        <form action="/add_task" method="post">
+            <input type="text" name="title" placeholder="Enter task" required>
+            <button type="submit">Add Task</button>
+        </form>
+        <form action="/set_mood" method="post" class="mood-form">
+            <label>How’s your mood? (Current: {{ mood }})</label>
+            <select name="mood">
+                <option value="normal" {% if mood == "normal" %}selected{% endif %}>Normal</option>
+                <option value="stressed" {% if mood == "stressed" %}selected{% endif %}>Stressed</option>
+                <option value="tired" {% if mood == "tired" %}selected{% endif %}>Tired</option>
+            </select>
+            <button type="submit">Set Mood</button>
+        </form>
+        <div class="task-container">
+            <ul class="task-list">
+                {% if tasks|length > 0 %}
+                    {% for task in tasks %}
+                        <li>
+                            <span class="task-title">{{ task.title }}</span>
+                            <span class="task-priority">[Priority: {{ task.priority }}]</span>
+                            <form action="/delete_task/{{ task.id }}" method="post" style="display:inline;">
+                                <button type="submit">Delete</button>
+                            </form>
+                        </li>
+                    {% endfor %}
+                {% else %}
+                    <li class="empty-message">No tasks yet—add one above!</li>
+                {% endif %}
+            </ul>
+        </div>
+    </section>
 </body>
 </html>
