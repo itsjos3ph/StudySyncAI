@@ -4,30 +4,47 @@
     <meta charset="UTF-8">
     <title>Dashboard - StudySync AI</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="{{ url_for('static', filename='timer.js') }}"></script>
 </head>
 <body>
-    <!-- Top bar containing notification and dark mode button -->
     <div class="top-bar">
-        <div class="notification-box">
-            {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                    {{ messages[-1] }} <!-- Show only the latest message -->
-                {% else %}
-                    Good luck on your studying! <!-- Default message -->
-                {% endif %}
-            {% endwith %}
+        <div class="site-name">StudySync AI</div>
+        <div class="top-buttons">
+            <button id="theme-toggle" class="toggle-theme">🌙</button>
+            <button id="profile-btn" class="profile-btn">Profile</button>
+            <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
         </div>
-        <button id="theme-toggle" class="toggle-theme">🌙 Toggle Dark Mode</button>
     </div>
 
-    <header class="header">
-        <div class="site-name">StudySync AI</div>
-        <div class="user-info">
-            <span>Welcome, {{ username }}</span>
-            <a href="{{ url_for('logout') }}" class="logout-btn">Log Out</a>
+    <div id="profile-popout" class="profile-popout hidden">
+        <h3>{{ username }}'s Profile</h3>
+        <div class="study-sessions">
+            <p>Total Time Spent Studying: <span id="total-study-time">{{ total_study_time }}</span></p>
+            <button id="reset-total-btn" class="reset-total-btn">Reset Total Time</button>
         </div>
-    </header>
+        <div class="profile-settings">
+            <h4>Task Filter</h4>
+            <form action="{{ url_for('dashboard') }}" method="post" class="sort-form">
+                <label>Sort by:</label>
+                <select name="sort">
+                    <option value="off" {% if sort_option == 'off' %}selected{% endif %}>Off</option>
+                    <option value="due_date" {% if sort_option == 'due_date' %}selected{% endif %}>Due Date</option>
+                </select>
+                <button type="submit">Apply</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="notification-box">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {{ messages[-1] }}
+            {% else %}
+                Good luck on your studying!
+            {% endif %}
+        {% endwith %}
+    </div>
 
     <section class="study-time">
         <h2>Study Time</h2>
@@ -53,8 +70,8 @@
         <form action="/add_task" method="post" class="task-form">
             <input type="text" name="title" placeholder="Task title (required)" required>
             <input type="text" name="description" placeholder="Description">
-            <input type="date" id="due_date" name="due_date" placeholder="Due date (optional)">
-            <input type="time" id="due_time" name="due_time" placeholder="Due time (optional)">
+            <input type="date" id="due_date" name="due_date" value="{{ current_date }}">
+            <input type="time" id="due_time" name="due_time" value="{{ current_time }}">
             <button type="submit">Add Task</button>
         </form>
         <div class="task-container">
@@ -83,16 +100,15 @@
                 {% endif %}
             </ul>
         </div>
-        <form action="{{ url_for('dashboard') }}" method="post" class="sort-form">
-            <label>Sort by:</label>
-            <select name="sort">
-                <option value="off" {% if sort_option == 'off' %}selected{% endif %}>Off</option>
-                <option value="due_date" {% if sort_option == 'due_date' %}selected{% endif %}>Due Date</option>
-            </select>
-            <button type="submit">Sort</button>
-        </form>
     </section>
 
     <script src="{{ url_for('static', filename='theme.js') }}"></script>
+    <script>
+        const profileBtn = document.getElementById('profile-btn');
+        const popout = document.getElementById('profile-popout');
+        profileBtn.addEventListener('click', () => {
+            popout.classList.toggle('hidden');
+        });
+    </script>
 </body>
 </html>
