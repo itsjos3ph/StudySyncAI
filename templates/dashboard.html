@@ -7,15 +7,20 @@
     <script src="{{ url_for('static', filename='timer.js') }}"></script>
 </head>
 <body>
-    <div class="notification-box">
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                {{ messages[-1] }} <!-- Show only the latest message -->
-            {% else %}
-                Good luck on your studying! <!-- Default message -->
-            {% endif %}
-        {% endwith %}
+    <!-- Top bar containing notification and dark mode button -->
+    <div class="top-bar">
+        <div class="notification-box">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {{ messages[-1] }} <!-- Show only the latest message -->
+                {% else %}
+                    Good luck on your studying! <!-- Default message -->
+                {% endif %}
+            {% endwith %}
+        </div>
+        <button id="theme-toggle" class="toggle-theme">🌙 Toggle Dark Mode</button>
     </div>
+
     <header class="header">
         <div class="site-name">StudySync AI</div>
         <div class="user-info">
@@ -61,7 +66,7 @@
                                 <span class="task-title">
                                     {{ task.title }}
                                     {% if task.due_datetime %}
-                                        <span class="task-due-date"> | Due: {{ task.due_datetime.strftime('%B %d, %Y %I:%M %p') }}</span>
+                                        <span class="task-due-date">Due: {{ task.due_datetime.strftime('%B %d, %Y %I:%M %p') }}</span>
                                     {% endif %}
                                 </span>
                                 {% if task.description %}
@@ -88,25 +93,6 @@
         </form>
     </section>
 
-    <script>
-        // Auto-fill current date and time in task form
-        document.addEventListener("DOMContentLoaded", function () {
-            const now = new Date();
-            
-            // Set current date (YYYY-MM-DD format)
-            const dateInput = document.getElementById("due_date");
-            if (dateInput) {
-                dateInput.value = now.toISOString().split("T")[0];
-            }
-
-            // Set current time (HH:MM format)
-            const timeInput = document.getElementById("due_time");
-            if (timeInput) {
-                const hours = String(now.getHours()).padStart(2, '0');
-                const minutes = String(now.getMinutes()).padStart(2, '0');
-                timeInput.value = `${hours}:${minutes}`;
-            }
-        });
-    </script>
+    <script src="{{ url_for('static', filename='theme.js') }}"></script>
 </body>
 </html>
