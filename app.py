@@ -29,7 +29,7 @@ login_manager.login_view = 'login'
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
-    password = db.Column(db.String(120), nullable=False)
+    password = db.Column(db.String(255), nullable=False)  # Changed from 120 to 255
     timer_default = db.Column(db.Integer, default=25)
     study_balance = db.Column(db.Integer, default=0)
     credits = db.Column(db.Integer, default=0)
