@@ -80,11 +80,6 @@ def login():
 def dashboard():
     sort_option = request.form.get('sort', 'off') if request.method == 'POST' else 'off'
     
-    # Temporary: Add 25 minutes (1500 seconds) to study balance for testing
-    current_user.study_balance += 1500  # Add 25 minutes
-    db.session.commit()
-    # End temporary addition
-
     tasks_query = Task.query.filter_by(user_id=current_user.id)
     if sort_option == 'due_date':
         tasks = tasks_query.order_by(Task.due_datetime.asc()).all()
