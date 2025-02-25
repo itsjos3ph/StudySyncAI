@@ -6,19 +6,15 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import logging
 
-# Set up logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.urandom(24).hex()  # Unique key per run
-
-# Use DATABASE_URL from environment (for Render's PostgreSQL), fallback to SQLite locally
+app.config['SECRET_KEY'] = os.urandom(24).hex()
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', f'sqlite:///{os.path.join(BASE_DIR, "database.db")}')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Adjust URI for PostgreSQL if provided by Render (replace 'postgres://' with 'postgresql://')
 if app.config['SQLALCHEMY_DATABASE_URI'].startswith('postgres://'):
     app.config['SQLALCHEMY_DATABASE_URI'] = app.config['SQLALCHEMY_DATABASE_URI'].replace('postgres://', 'postgresql://')
 
@@ -29,7 +25,7 @@ login_manager.login_view = 'login'
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
-    password = db.Column(db.String(255), nullable=False)  # Changed from 120 to 255
+    password = db.Column(db.String(255), nullable=False)
     timer_default = db.Column(db.Integer, default=25)
     study_balance = db.Column(db.Integer, default=0)
     credits = db.Column(db.Integer, default=0)
@@ -84,6 +80,11 @@ def login():
 def dashboard():
     sort_option = request.form.get('sort', 'off') if request.method == 'POST' else 'off'
     
+    # Temporary: Add 25 minutes (1500 seconds) to study balance for testing
+    current_user.study_balance += 1500  # Add 25 minutes
+    db.session.commit()
+    # End temporary addition
+
     tasks_query = Task.query.filter_by(user_id=current_user.id)
     if sort_option == 'due_date':
         tasks = tasks_query.order_by(Task.due_datetime.asc()).all()
@@ -199,10 +200,9 @@ def spend_credits():
 @login_required
 def reset_study_time():
     user = User.query.get(current_user.id)
-    user.study_balance = 0
-    user.credits = 0
+    user.study_balance = 0  # Only reset study balance
     db.session.commit()
-    return jsonify({'status': 'success', 'study_balance': 0, 'credits': 0})
+    return jsonify({'status': 'success', 'study_balance': 0, 'credits': user.credits})
 
 @app.route('/break')
 @login_required
@@ -214,7 +214,7 @@ def break_page():
 def logout():
     logger.debug(f"Logging out user: {current_user.username}")
     logout_user()
-    session.clear()  # Force clear the session
+    session.clear()
     logger.debug("User logged out, redirecting to home")
     return redirect(url_for('home'))
 

@@ -24,7 +24,7 @@
             <button class="tab-btn active" data-tab="stats">Stats</button>
             <button class="tab-btn" data-tab="settings">Settings</button>
         </div>
-        <div id="stats" class="tab-content active">
+        <div id="stats" class="tab-content">
             <p>Study Balance: <span id="study-balance">{{ study_balance }}</span></p>
             <p>Credits: <span id="credits-display">{{ credits }}</span></p>
             <button id="convert-credits-btn" class="convert-credits-btn">Convert to Credits</button>
@@ -32,9 +32,9 @@
         </div>
         <div id="settings" class="tab-content hidden">
             <h4>Set Custom Timer</h4>
-            <form action="{{ url_for('set_timer_default') }}" method="post">
+            <form action="{{ url_for('set_timer_default') }}" method="post" class="task-form">
                 <input type="number" id="customTime" name="customTime" placeholder="Minutes" value="{{ timer_default }}">
-                <button type="submit">Set Timer</button>
+                <button type="submit" class="action-btn">Set Timer</button>
             </form>
             <h4>Task Filter</h4>
             <form action="{{ url_for('dashboard') }}" method="post" class="sort-form">
@@ -60,11 +60,7 @@
         </div>
     </div>
 
-    <div id="break-popout" class="break-popout hidden">
-        <h3>Time’s Up!</h3>
-        <p>Hey, time to take a break! You’ve earned some game time.</p>
-        <button id="break-ok-btn">Okay</button>
-    </div>
+    <div id="break-popout" class="break-popout hidden"></div>
 
     <div id="credit-notification" class="credit-notification hidden">Not enough time, study more!</div>
 
@@ -153,8 +149,6 @@
         const chatbotInput = document.getElementById('chatbot-input');
         const chatbotMessages = document.getElementById('chatbot-messages');
         const convertCreditsBtn = document.getElementById('convert-credits-btn');
-        const breakPopout = document.getElementById('break-popout');
-        const breakOkBtn = document.getElementById('break-ok-btn');
         const creditNotification = document.getElementById('credit-notification');
 
         profileBtn.addEventListener('click', () => popout.classList.toggle('hidden'));
@@ -186,13 +180,9 @@
             });
         });
 
-        cancelEditBtn.addEventListener('click', () => {
-            editPopout.classList.add('hidden');
-        });
+        cancelEditBtn.addEventListener('click', () => editPopout.classList.add('hidden'));
 
-        chatbotBtn.addEventListener('click', () => {
-            chatbotPopout.classList.toggle('hidden');
-        });
+        chatbotBtn.addEventListener('click', () => chatbotPopout.classList.toggle('hidden'));
 
         chatbotForm.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -220,18 +210,13 @@
                     document.getElementById('study-balance').textContent = formatTime(data.study_balance);
                     document.getElementById('credits-display').textContent = data.credits;
                     document.getElementById('credits').textContent = data.credits;
+                    sessionStorage.setItem('credits', data.credits);
                 } else {
                     creditNotification.classList.remove('hidden');
-                    setTimeout(() => {
-                        creditNotification.classList.add('hidden');
-                    }, 3000);
+                    setTimeout(() => creditNotification.classList.add('hidden'), 3000);
                 }
             })
             .catch(error => console.error('Error converting credits:', error));
-        });
-
-        breakOkBtn.addEventListener('click', () => {
-            breakPopout.classList.add('hidden');
         });
 
         function formatTime(seconds) {

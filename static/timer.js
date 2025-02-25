@@ -13,18 +13,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const breakPopout = document.getElementById('break-popout');
 
     let defaultTime = parseInt(timerDisplay.textContent.split(':')[0]) || 25;
-    let timeLeft = defaultTime * 60 * 1000; // Convert to milliseconds
+    let timeLeft = defaultTime * 60 * 1000; // In milliseconds
     let startTime = null;
     let timerId = null;
-    let sessionElapsedTime = 0; // Time spent in current session in milliseconds
+    let sessionStartTimeLeft = null; // Track the starting timeLeft for each session segment
 
     function updateDisplay() {
         if (!timerId) return;
         const now = performance.now();
-        if (!startTime) startTime = now;
+        if (!startTime) {
+            startTime = now;
+            sessionStartTimeLeft = timeLeft; // Set initial timeLeft for this segment
+        }
         const elapsed = now - startTime;
-        timeLeft = Math.max(0, (defaultTime * 60 * 1000) - elapsed);
-        sessionElapsedTime = elapsed;
+        timeLeft = Math.max(0, sessionStartTimeLeft - elapsed); // Calculate based on session start
         const minutes = Math.floor(timeLeft / 60000);
         const seconds = Math.floor((timeLeft % 60000) / 1000);
         const timeStr = `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
@@ -36,10 +38,24 @@ document.addEventListener('DOMContentLoaded', () => {
             startBtn.disabled = false;
             pauseBtn.disabled = true;
             clearActive();
+            breakPopout.innerHTML = `
+                <h3>Time’s Up!</h3>
+                <p>Hey, wanna go for a break?</p>
+                <button id="break-yes-btn">Yes</button>
+                <button id="break-no-btn">No</button>
+            `;
             breakPopout.classList.remove('hidden');
-            breakSection.style.display = 'block';
-            sessionElapsedTime = 0;
-            sendElapsedTime(elapsed);
+            document.getElementById('break-yes-btn').addEventListener('click', () => {
+                breakPopout.classList.add('hidden');
+                window.location.href = '/break';
+            });
+            document.getElementById('break-no-btn').addEventListener('click', () => {
+                breakPopout.classList.add('hidden');
+                resetTimer();
+            });
+            sendElapsedTime(sessionStartTimeLeft - timeLeft); // Send total elapsed time for this segment
+            startTime = null;
+            sessionStartTimeLeft = null;
         } else {
             timerId = requestAnimationFrame(updateDisplay);
         }
@@ -60,9 +76,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function startTimer() {
         if (!timerId) {
-            startTime = null; // Reset start time
-            defaultTime = parseInt(customTimeInput.value) || defaultTime; // Update default if changed
-            timeLeft = defaultTime * 60 * 1000;
+            if (startTime === null && timeLeft === defaultTime * 60 * 1000) { // Fresh start
+                defaultTime = parseInt(customTimeInput.value) || defaultTime;
+                timeLeft = defaultTime * 60 * 1000;
+            } // Otherwise, resume with existing timeLeft
+            startTime = performance.now();
+            sessionStartTimeLeft = timeLeft; // Capture timeLeft at start of this segment
             timerId = requestAnimationFrame(updateDisplay);
             startBtn.disabled = true;
             pauseBtn.disabled = false;
@@ -80,7 +99,10 @@ document.addEventListener('DOMContentLoaded', () => {
             pauseBtn.disabled = true;
             clearActive();
             pauseBtn.classList.add('active');
-            sendElapsedTime(sessionElapsedTime);
+            const elapsedThisSegment = sessionStartTimeLeft - timeLeft; // Time elapsed since start of this segment
+            sendElapsedTime(elapsedThisSegment);
+            startTime = null;
+            sessionStartTimeLeft = null; // Reset for next segment
         }
     }
 
@@ -90,8 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
             timerId = null;
         }
         defaultTime = parseInt(customTimeInput.value) || defaultTime;
-        timeLeft = defaultTime * 60 * 1000;
-        sessionElapsedTime = 0;
+        timeLeft = defaultTime * 60 * 1000; // Explicitly reset timeLeft here
         const minutes = Math.floor(timeLeft / 60000);
         const seconds = Math.floor((timeLeft % 60000) / 1000);
         timerDisplay.textContent = `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
@@ -102,6 +123,8 @@ document.addEventListener('DOMContentLoaded', () => {
         resetBtn.classList.add('active');
         setTimeout(() => resetBtn.classList.remove('active'), 200);
         breakSection.style.display = 'none';
+        startTime = null;
+        sessionStartTimeLeft = null;
     }
 
     function sendElapsedTime(increment) {
@@ -116,6 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 updateStudyBalance(data.study_balance);
                 creditsDisplay.textContent = data.credits;
                 creditsProfileDisplay.textContent = data.credits;
+                sessionStorage.setItem('credits', data.credits); // Sync credits
             }
         })
         .catch(error => console.error('Error updating study time:', error));
@@ -129,9 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-                updateStudyBalance(0);
-                creditsDisplay.textContent = 0;
-                creditsProfileDisplay.textContent = 0;
+                updateStudyBalance(0); // Only reset study balance
             }
         })
         .catch(error => console.error('Error resetting study time:', error));
@@ -148,6 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.status === 'success') {
                 creditsDisplay.textContent = data.credits;
                 creditsProfileDisplay.textContent = data.credits;
+                sessionStorage.setItem('credits', data.credits); // Sync credits
                 window.location.href = '/break';
             } else {
                 alert(data.message);

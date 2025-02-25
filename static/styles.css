@@ -671,7 +671,8 @@ body.dark-mode .timer-buttons button.active {
 
 .task-form input[type="text"],
 .task-form input[type="date"],
-.task-form input[type="time"] {
+.task-form input[type="time"],
+.task-form input[type="number"] {  /* Added for specificity */
     padding: 10px;
     border: 1px solid var(--border-color);
     border-radius: 8px;

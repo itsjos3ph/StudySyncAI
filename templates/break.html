@@ -48,10 +48,13 @@
         const easyBtn = document.getElementById('easy-btn');
         const expertBtn = document.getElementById('expert-btn');
 
-        // Apply saved theme
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme === 'dark') {
             document.body.classList.add('dark-mode');
+        }
+        const updatedCredits = sessionStorage.getItem('credits');
+        if (updatedCredits) {
+            creditsDisplay.textContent = updatedCredits;
         }
 
         playMinesweeperBtn.addEventListener('click', () => {
@@ -64,6 +67,7 @@
             .then(data => {
                 if (data.status === 'success') {
                     creditsDisplay.textContent = data.credits;
+                    sessionStorage.setItem('credits', data.credits);
                     difficultyPopout.classList.remove('hidden');
                     playMinesweeperBtn.classList.add('hidden');
                 } else {
