@@ -4,23 +4,24 @@
     <meta charset="UTF-8">
     <title>Break - StudySync AI</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <script src="{{ url_for('static', filename='minesweeper.js') }}"></script>
 </head>
 <body>
-    <div class="top-bar">
+    <header class="top-bar">
         <div class="site-name">StudySync AI</div>
-        <div class="top-buttons">
-            <a href="{{ url_for('dashboard') }}" class="dashboard-btn">Dashboard</a>
-            <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
-        </div>
-    </div>
+        <nav class="top-buttons">
+            <a href="{{ url_for('dashboard') }}" class="action-btn dashboard-btn">Dashboard</a>
+            <a href="{{ url_for('logout') }}" class="action-btn logout-btn">Logout</a>
+        </nav>
+    </header>
 
     <section class="break-page">
         <h2>Take a Break!</h2>
         <p>Credits Available: <span id="credits">{{ credits }}</span></p>
         <div class="game-options">
-            <button id="play-minesweeper-btn" class="game-btn">Play Minesweeper (1 credit)</button>
+            <button id="play-minesweeper-btn" class="action-btn">Play Minesweeper (1 credit)</button>
         </div>
         <div id="difficulty-popout" class="difficulty-popout hidden">
             <div class="difficulty-box">

@@ -181,6 +181,9 @@ body {
     max-width: 800px;
     width: 100%;
     margin: 0 auto 20px;
+    padding: 10px;
+    background: var(--box-bg);
+    border-radius: 10px;
 }
 
 .top-buttons {
@@ -188,35 +191,53 @@ body {
     gap: 10px;
 }
 
-.profile-btn {
+.site-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--btn-active-bg);
+}
+
+body.dark-mode .site-name {
+    color: #D0D0D0; /* Match h2 in dark mode */
+}
+
+/* Action Buttons (Unified) */
+.action-btn {
     padding: 8px 16px;
     border: none;
-    cursor: pointer;
-    background: var(--btn-bg);
-    color: var(--btn-text-color);
-    border-radius: 20px;
-    font-weight: 500;
-    font-size: 1rem;
-    transition: background 0.3s ease;
-}
-
-.profile-btn:hover {
-    background: var(--btn-hover-bg);
-}
-
-.break-btn, .dashboard-btn {
-    padding: 8px 16px;
     background: var(--btn-bg);
     color: var(--btn-text-color);
     text-decoration: none;
     border-radius: 20px;
     font-weight: 500;
     font-size: 1rem;
+    cursor: pointer;
     transition: background 0.3s ease;
 }
 
-.break-btn:hover, .dashboard-btn:hover {
+.action-btn:hover {
     background: var(--btn-hover-bg);
+}
+
+.action-btn.toggle-theme {
+    background: var(--btn-bg);
+}
+
+body:not(.dark-mode) .action-btn.toggle-theme {
+    box-shadow: 0 0 8px 2px var(--glow-color);
+}
+
+.action-btn.toggle-theme.active {
+    box-shadow: 0 0 8px 2px var(--glow-color);
+}
+
+.action-btn.logout-btn {
+    background: #8B0000;
+    color: #fff;
+}
+
+.action-btn.logout-btn:hover {
+    background: #6B0000;
 }
 
 /* Credit Notification */
@@ -235,8 +256,7 @@ body {
 }
 
 .credit-notification.hidden {
-    display: block;
-    opacity: 0;
+    display: none; /* Changed to remove from layout */
 }
 
 .credit-notification:not(.hidden) {
@@ -301,7 +321,7 @@ body {
 .reset-total-btn, .convert-credits-btn {
     padding: 6px 12px;
     border: none;
-    background: #8B0000; /* Red velvet */
+    background: #8B0000;
     color: #fff;
     border-radius: 20px;
     cursor: pointer;
@@ -312,7 +332,7 @@ body {
 }
 
 .reset-total-btn:hover, .convert-credits-btn:hover {
-    background: #6B0000; /* Darker red velvet on hover */
+    background: #6B0000;
 }
 
 /* Chatbot Container */
@@ -450,47 +470,6 @@ body {
     background: var(--btn-hover-bg);
 }
 
-/* Toggle Theme */
-.toggle-theme {
-    padding: 8px 16px;
-    border: none;
-    cursor: pointer;
-    background: var(--btn-bg);
-    color: var(--btn-text-color);
-    border-radius: 20px;
-    font-weight: 500;
-    font-size: 1rem;
-    transition: background 0.3s ease, box-shadow 0.3s ease;
-}
-
-body:not(.dark-mode) .toggle-theme {
-    box-shadow: 0 0 8px 2px var(--glow-color); /* Dark glow in light mode when not active */
-}
-
-.toggle-theme:hover {
-    background: var(--btn-hover-bg);
-}
-
-.toggle-theme.active {
-    box-shadow: 0 0 8px 2px var(--glow-color); /* Glow when active */
-}
-
-/* Logout Button */
-.logout-btn {
-    background: #8B0000; /* Red velvet */
-    color: #fff;
-    padding: 6px 12px;
-    text-decoration: none;
-    border-radius: 20px;
-    font-weight: 500;
-    font-size: 1rem;
-    transition: background 0.3s ease;
-}
-
-.logout-btn:hover {
-    background: #6B0000; /* Darker red velvet on hover */
-}
-
 /* Study Time Section */
 .study-time {
     max-width: 450px;
@@ -533,22 +512,22 @@ body:not(.dark-mode) .toggle-theme {
 }
 
 .timer-buttons button:disabled {
-    background: var(--btn-bg); /* Normal when disabled */
+    background: var(--btn-bg);
     cursor: not-allowed;
-    opacity: 0.7; /* Slightly faded when not active */
+    opacity: 0.7;
 }
 
 .timer-buttons button.active {
-    background: var(--btn-active-bg); /* Darker when active */
-    box-shadow: 0 0 8px 2px var(--glow-color); /* Glow effect */
+    background: var(--btn-active-bg);
+    box-shadow: 0 0 8px 2px var(--glow-color);
 }
 
 body:not(.dark-mode) .timer-buttons button.active {
-    color: #E0E0E0; /* Lighter text in light mode when active */
+    color: #E0E0E0;
 }
 
 body.dark-mode .timer-buttons button.active {
-    color: #D0D0D0; /* Brighter text in dark mode when active */
+    color: #D0D0D0;
 }
 
 .break-section {
@@ -669,7 +648,7 @@ body.dark-mode .timer-buttons button.active {
 .task-list button {
     padding: 6px 12px;
     border: none;
-    background: #8B0000; /* Red velvet */
+    background: #8B0000;
     color: #fff;
     border-radius: 20px;
     cursor: pointer;
@@ -679,7 +658,7 @@ body.dark-mode .timer-buttons button.active {
 }
 
 .task-list button:hover {
-    background: #6B0000; /* Darker red velvet */
+    background: #6B0000;
 }
 
 .task-form {
@@ -774,12 +753,12 @@ body.dark-mode .timer-buttons button.active {
 }
 
 .edit-task-form button[type="button"] {
-    background: #8B0000; /* Red velvet for Cancel */
+    background: #8B0000;
     color: #fff;
 }
 
 .edit-task-form button[type="button"]:hover {
-    background: #6B0000; /* Darker red velvet */
+    background: #6B0000;
 }
 
 /* Sort Form */
@@ -841,27 +820,11 @@ body.dark-mode .timer-buttons button.active {
 }
 
 body.dark-mode .break-page h2 {
-    color: #D0D0D0; /* Brighter in dark mode */
+    color: #D0D0D0;
 }
 
 .game-options {
     margin: 20px 0;
-}
-
-.game-btn {
-    padding: 10px 20px;
-    border: none;
-    background: var(--btn-bg);
-    color: var(--btn-text-color);
-    border-radius: 20px;
-    cursor: pointer;
-    font-weight: 500;
-    font-size: 1rem;
-    transition: background 0.3s ease;
-}
-
-.game-btn:hover {
-    background: var(--btn-hover-bg);
 }
 
 /* Difficulty Popout */
@@ -878,7 +841,7 @@ body.dark-mode .break-page h2 {
 }
 
 .difficulty-box {
-    background: #C0C0C0; /* Classic Windows grey */
+    background: #C0C0C0;
     border-top: 2px solid #FFFFFF;
     border-left: 2px solid #FFFFFF;
     border-bottom: 2px solid #808080;
@@ -893,7 +856,7 @@ body.dark-mode .break-page h2 {
     font-size: 1.2rem;
     margin: 0 0 10px;
     color: #000000;
-    background: #000080; /* Windows title bar blue */
+    background: #000080;
     color: #FFFFFF;
     padding: 2px 5px;
     border-top: 1px solid #FFFFFF;
@@ -925,7 +888,7 @@ body.dark-mode .break-page h2 {
 }
 
 .minesweeper-box {
-    background: #C0C0C0; /* Classic Windows grey */
+    background: #C0C0C0;
     border-top: 2px solid #FFFFFF;
     border-left: 2px solid #FFFFFF;
     border-bottom: 2px solid #808080;
@@ -961,7 +924,7 @@ body.dark-mode .break-page h2 {
     justify-content: center;
     margin-bottom: 10px;
     font-size: 0.9rem;
-    background: #000080; /* Windows title bar blue */
+    background: #000080;
     color: #FFFFFF;
     padding: 2px 5px;
     border-top: 1px solid #FFFFFF;

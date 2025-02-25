@@ -8,15 +8,15 @@
     <script src="{{ url_for('static', filename='timer.js') }}"></script>
 </head>
 <body>
-    <div class="top-bar">
+    <header class="top-bar">
         <div class="site-name">StudySync AI</div>
-        <div class="top-buttons">
-            <button id="theme-toggle" class="toggle-theme">🌙</button>
-            <button id="profile-btn" class="profile-btn">Profile</button>
-            <a href="{{ url_for('break_page') }}" class="break-btn">Break</a>
-            <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
-        </div>
-    </div>
+        <nav class="top-buttons">
+            <button id="theme-toggle" class="action-btn toggle-theme">🌙</button>
+            <button id="profile-btn" class="action-btn">Profile</button>
+            <a href="{{ url_for('break_page') }}" class="action-btn break-btn">Break</a>
+            <a href="{{ url_for('logout') }}" class="action-btn logout-btn">Logout</a>
+        </nav>
+    </header>
 
     <div id="profile-popout" class="profile-popout hidden">
         <h3>{{ username }}'s Profile</h3>

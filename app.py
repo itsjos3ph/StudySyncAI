@@ -1,10 +1,10 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for, flash, get_flashed_messages, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, get_flashed_messages, jsonify, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
-import logging  # Added for debugging
+import logging
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.urandom(24).hex()  # Unique secret key for each run
+app.config['SECRET_KEY'] = os.urandom(24).hex()  # Unique key per run
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(BASE_DIR, "database.db")}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -202,11 +202,12 @@ def reset_study_time():
 def break_page():
     return render_template('break.html', credits=current_user.credits)
 
-@app.route('/logout')
+@app.route('/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
     logger.debug(f"Logging out user: {current_user.username}")
     logout_user()
+    session.clear()  # Force clear the session
     logger.debug("User logged out, redirecting to home")
     return redirect(url_for('home'))
 
