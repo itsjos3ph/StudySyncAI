@@ -5,9 +5,14 @@
     <title>StudySync AI</title>
     <link rel="stylesheet" href="/static/styles.css">
 </head>
-<body>
-    <h1>Welcome to StudySync AI</h1>
-    <p>Your study buddy with AI smarts!</p>
-    <a href="{{ url_for('signup') }}">Sign Up</a> | <a href="{{ url_for('login') }}">Login</a>
+<body class="welcome-page">
+    <div class="welcome-container">
+        <h1 class="welcome-title">StudySync AI</h1>
+        <p class="welcome-subtitle">Your smart study companion awaits!</p>
+        <div class="welcome-buttons">
+            <a href="{{ url_for('signup') }}" class="welcome-btn">Sign Up</a>
+            <a href="{{ url_for('login') }}" class="welcome-btn">Login</a>
+        </div>
+    </div>
 </body>
 </html>

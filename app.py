@@ -4,10 +4,15 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
+import logging  # Added for debugging
+
+# Set up logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your-secret-key-here'
+app.config['SECRET_KEY'] = os.urandom(24).hex()  # Unique secret key for each run
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(BASE_DIR, "database.db")}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -19,7 +24,8 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
     timer_default = db.Column(db.Integer, default=25)
-    total_study_time = db.Column(db.Integer, default=0)
+    study_balance = db.Column(db.Integer, default=0)
+    credits = db.Column(db.Integer, default=0)
     tasks = db.relationship('Task', backref='user', lazy=True)
 
 class Task(db.Model):
@@ -43,13 +49,12 @@ def signup():
         username = request.form['username']
         password = request.form['password']
         if User.query.filter_by(username=username).first():
-            flash('Username already exists!')
+            flash('That name is already in use!')
             return redirect(url_for('signup'))
         hashed_password = generate_password_hash(password)
-        new_user = User(username=username, password=hashed_password, timer_default=25, total_study_time=0)
+        new_user = User(username=username, password=hashed_password, timer_default=25, study_balance=0, credits=5)
         db.session.add(new_user)
         db.session.commit()
-        flash('Signup successful! Please log in.')
         return redirect(url_for('login'))
     return render_template('signup.html')
 
@@ -61,8 +66,9 @@ def login():
         user = User.query.filter_by(username=username).first()
         if user and check_password_hash(user.password, password):
             login_user(user)
+            logger.debug(f"User {username} logged in successfully")
             return redirect(url_for('dashboard'))
-        flash('Invalid username or password!')
+        flash('Invalid login!')
         return redirect(url_for('login'))
     return render_template('login.html')
 
@@ -81,18 +87,16 @@ def dashboard():
     current_date = now.strftime('%Y-%m-%d')
     current_time = now.strftime('%H:%M')
 
-    total_seconds = current_user.total_study_time
-    hours = total_seconds // 3600
-    minutes = (total_seconds % 3600) // 60
-    seconds = total_seconds % 60
-    total_study_time_str = f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+    balance_seconds = current_user.study_balance
+    balance_hours = balance_seconds // 3600
+    balance_minutes = (balance_seconds % 3600) // 60
+    balance_seconds = balance_seconds % 60
+    study_balance_str = f"{balance_hours:02d}:{balance_minutes:02d}:{balance_seconds:02d}"
 
-    if not get_flashed_messages():
-        flash('Good luck on your studying!')
     return render_template('dashboard.html', username=current_user.username, tasks=tasks, 
                            timer_default=current_user.timer_default, sort_option=sort_option,
                            current_date=current_date, current_time=current_time, 
-                           total_study_time=total_study_time_str)
+                           study_balance=study_balance_str, credits=current_user.credits)
 
 @app.route('/add_task', methods=['POST'])
 @login_required
@@ -110,7 +114,6 @@ def add_task():
     new_task = Task(title=title, description=description, due_datetime=due_datetime, user_id=current_user.id)
     db.session.add(new_task)
     db.session.commit()
-    flash('Task added!')
     return redirect(url_for('dashboard'))
 
 @app.route('/delete_task/<int:task_id>', methods=['POST'])
@@ -120,7 +123,25 @@ def delete_task(task_id):
     if task and task.user_id == current_user.id:
         db.session.delete(task)
         db.session.commit()
-        flash('Task deleted!')
+    return redirect(url_for('dashboard'))
+
+@app.route('/edit_task', methods=['POST'])
+@login_required
+def edit_task():
+    task_id = request.form.get('task_id')
+    task = Task.query.get(task_id)
+    if task and task.user_id == current_user.id:
+        task.title = request.form['title']
+        task.description = request.form.get('description', '')
+        due_date_str = request.form.get('due_date', '')
+        due_time_str = request.form.get('due_time', '')
+        if due_date_str and due_time_str:
+            task.due_datetime = datetime.strptime(f"{due_date_str} {due_time_str}", '%Y-%m-%d %H:%M')
+        elif due_date_str:
+            task.due_datetime = datetime.strptime(due_date_str, '%Y-%m-%d')
+        else:
+            task.due_datetime = None
+        db.session.commit()
     return redirect(url_for('dashboard'))
 
 @app.route('/set_timer_default', methods=['POST'])
@@ -130,7 +151,6 @@ def set_timer_default():
     if custom_time:
         current_user.timer_default = int(custom_time)
         db.session.commit()
-        flash(f'Timer default set to {custom_time} minutes!')
     return redirect(url_for('dashboard'))
 
 @app.route('/update_study_time', methods=['POST'])
@@ -139,22 +159,55 @@ def update_study_time():
     data = request.get_json()
     session_time = data.get('session_time', 0)
     user = User.query.get(current_user.id)
-    user.total_study_time += int(session_time)  # Add 1 second at a time
+    user.study_balance += int(session_time)
     db.session.commit()
-    return jsonify({'status': 'success', 'total_study_time': user.total_study_time})
+    return jsonify({'status': 'success', 'study_balance': user.study_balance, 'credits': user.credits})
+
+@app.route('/convert_credits', methods=['POST'])
+@login_required
+def convert_credits():
+    user = User.query.get(current_user.id)
+    credits_to_add = user.study_balance // (25 * 60)  # 25 minutes = 1 credit
+    if credits_to_add > 0:
+        user.credits += credits_to_add
+        user.study_balance -= credits_to_add * 25 * 60
+        db.session.commit()
+        return jsonify({'status': 'success', 'study_balance': user.study_balance, 'credits': user.credits})
+    else:
+        return jsonify({'status': 'error', 'study_balance': user.study_balance, 'credits': user.credits})
+
+@app.route('/spend_credits', methods=['POST'])
+@login_required
+def spend_credits():
+    data = request.get_json()
+    credits_spent = data.get('credits', 0)
+    user = User.query.get(current_user.id)
+    if user.credits >= credits_spent:
+        user.credits -= credits_spent
+        db.session.commit()
+        return jsonify({'status': 'success', 'credits': user.credits})
+    return jsonify({'status': 'error', 'message': 'Not enough credits'})
 
 @app.route('/reset_study_time', methods=['POST'])
 @login_required
 def reset_study_time():
     user = User.query.get(current_user.id)
-    user.total_study_time = 0
+    user.study_balance = 0
+    user.credits = 0
     db.session.commit()
-    return jsonify({'status': 'success', 'total_study_time': 0})
+    return jsonify({'status': 'success', 'study_balance': 0, 'credits': 0})
+
+@app.route('/break')
+@login_required
+def break_page():
+    return render_template('break.html', credits=current_user.credits)
 
 @app.route('/logout')
 @login_required
 def logout():
+    logger.debug(f"Logging out user: {current_user.username}")
     logout_user()
+    logger.debug("User logged out, redirecting to home")
     return redirect(url_for('home'))
 
 with app.app_context():

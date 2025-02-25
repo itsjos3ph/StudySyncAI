@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Break - StudySync AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <script src="{{ url_for('static', filename='minesweeper.js') }}"></script>
+</head>
+<body>
+    <div class="top-bar">
+        <div class="site-name">StudySync AI</div>
+        <div class="top-buttons">
+            <a href="{{ url_for('dashboard') }}" class="dashboard-btn">Dashboard</a>
+            <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+        </div>
+    </div>
+
+    <section class="break-page">
+        <h2>Take a Break!</h2>
+        <p>Credits Available: <span id="credits">{{ credits }}</span></p>
+        <div class="game-options">
+            <button id="play-minesweeper-btn" class="game-btn">Play Minesweeper (1 credit)</button>
+        </div>
+        <div id="difficulty-popout" class="difficulty-popout hidden">
+            <div class="difficulty-box">
+                <h3>Choose Difficulty</h3>
+                <button id="easy-btn" class="difficulty-btn">Easy - 9x9, 10 Mines</button>
+                <button id="expert-btn" class="difficulty-btn">Expert - 30x16, 80 Mines</button>
+            </div>
+        </div>
+        <div id="minesweeper-container" class="minesweeper-container hidden">
+            <div class="minesweeper-box">
+                <div class="minesweeper-header">
+                    <span id="minesweeper-timer">05:00</span>
+                </div>
+                <div id="minesweeper-board" class="minesweeper-board"></div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const playMinesweeperBtn = document.getElementById('play-minesweeper-btn');
+        const difficultyPopout = document.getElementById('difficulty-popout');
+        const minesweeperContainer = document.getElementById('minesweeper-container');
+        const creditsDisplay = document.getElementById('credits');
+        const easyBtn = document.getElementById('easy-btn');
+        const expertBtn = document.getElementById('expert-btn');
+
+        // Apply saved theme
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+
+        playMinesweeperBtn.addEventListener('click', () => {
+            fetch('/spend_credits', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ credits: 1 })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    creditsDisplay.textContent = data.credits;
+                    difficultyPopout.classList.remove('hidden');
+                    playMinesweeperBtn.classList.add('hidden');
+                } else {
+                    alert(data.message);
+                }
+            });
+        });
+
+        easyBtn.addEventListener('click', () => {
+            difficultyPopout.classList.add('hidden');
+            minesweeperContainer.classList.remove('hidden');
+            initMinesweeper('easy');
+        });
+
+        expertBtn.addEventListener('click', () => {
+            difficultyPopout.classList.add('hidden');
+            minesweeperContainer.classList.remove('hidden');
+            initMinesweeper('expert');
+        });
+
+        function endMinesweeperGame() {
+            minesweeperContainer.classList.add('hidden');
+            playMinesweeperBtn.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

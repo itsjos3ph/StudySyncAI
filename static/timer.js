@@ -4,83 +4,124 @@ document.addEventListener('DOMContentLoaded', () => {
     const pauseBtn = document.getElementById('pauseBtn');
     const resetBtn = document.getElementById('resetBtn');
     const customTimeInput = document.getElementById('customTime');
-    const setTimeBtn = document.getElementById('setTimeBtn');
-    const totalStudyTimeDisplay = document.getElementById('total-study-time');
+    const studyBalanceDisplay = document.getElementById('study-balance');
     const resetTotalBtn = document.getElementById('reset-total-btn');
+    const breakSection = document.querySelector('.break-section');
+    const creditsDisplay = document.getElementById('credits');
+    const creditsProfileDisplay = document.getElementById('credits-display');
+    const playMinesweeperBtn = document.getElementById('play-minesweeper');
+    const breakPopout = document.getElementById('break-popout');
 
     let defaultTime = parseInt(timerDisplay.textContent.split(':')[0]) || 25;
-    let timeLeft = defaultTime * 60; // Convert to seconds
+    let timeLeft = defaultTime * 60 * 1000; // Convert to milliseconds
+    let startTime = null;
     let timerId = null;
-    let sessionElapsedTime = 0; // Time spent in current session
+    let sessionElapsedTime = 0; // Time spent in current session in milliseconds
 
     function updateDisplay() {
-        const minutes = Math.floor(timeLeft / 60);
-        const seconds = timeLeft % 60;
-        timerDisplay.textContent = `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+        if (!timerId) return;
+        const now = performance.now();
+        if (!startTime) startTime = now;
+        const elapsed = now - startTime;
+        timeLeft = Math.max(0, (defaultTime * 60 * 1000) - elapsed);
+        sessionElapsedTime = elapsed;
+        const minutes = Math.floor(timeLeft / 60000);
+        const seconds = Math.floor((timeLeft % 60000) / 1000);
+        const timeStr = `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+        timerDisplay.textContent = timeStr;
+        document.title = `StudySync AI - ${timeStr}`;
+        if (timeLeft <= 0) {
+            cancelAnimationFrame(timerId);
+            timerId = null;
+            startBtn.disabled = false;
+            pauseBtn.disabled = true;
+            clearActive();
+            breakPopout.classList.remove('hidden');
+            breakSection.style.display = 'block';
+            sessionElapsedTime = 0;
+            sendElapsedTime(elapsed);
+        } else {
+            timerId = requestAnimationFrame(updateDisplay);
+        }
     }
 
-    function updateTotalStudyTime(totalSeconds) {
+    function updateStudyBalance(totalSeconds) {
         const hours = Math.floor(totalSeconds / 3600);
         const minutes = Math.floor((totalSeconds % 3600) / 60);
         const seconds = totalSeconds % 60;
-        totalStudyTimeDisplay.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        studyBalanceDisplay.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    function clearActive() {
+        startBtn.classList.remove('active');
+        pauseBtn.classList.remove('active');
+        resetBtn.classList.remove('active');
     }
 
     function startTimer() {
         if (!timerId) {
-            timerId = setInterval(() => {
-                if (timeLeft > 0) {
-                    timeLeft--;
-                    sessionElapsedTime++;
-                    updateDisplay();
-                    sendElapsedTime(1); // Send 1 second at a time
-                } else {
-                    clearInterval(timerId);
-                    timerId = null;
-                    startBtn.disabled = false;
-                    pauseBtn.disabled = true;
-                    alert('Pomodoro complete!');
-                    sessionElapsedTime = 0;
-                }
-            }, 1000);
+            startTime = null; // Reset start time
+            defaultTime = parseInt(customTimeInput.value) || defaultTime; // Update default if changed
+            timeLeft = defaultTime * 60 * 1000;
+            timerId = requestAnimationFrame(updateDisplay);
             startBtn.disabled = true;
             pauseBtn.disabled = false;
+            clearActive();
+            startBtn.classList.add('active');
+            breakSection.style.display = 'none';
         }
     }
 
     function pauseTimer() {
-        clearInterval(timerId);
-        timerId = null;
-        startBtn.disabled = false;
-        pauseBtn.disabled = true;
+        if (timerId) {
+            cancelAnimationFrame(timerId);
+            timerId = null;
+            startBtn.disabled = false;
+            pauseBtn.disabled = true;
+            clearActive();
+            pauseBtn.classList.add('active');
+            sendElapsedTime(sessionElapsedTime);
+        }
     }
 
     function resetTimer() {
-        clearInterval(timerId);
-        timerId = null;
-        timeLeft = parseInt(customTimeInput.value) * 60 || defaultTime * 60;
+        if (timerId) {
+            cancelAnimationFrame(timerId);
+            timerId = null;
+        }
+        defaultTime = parseInt(customTimeInput.value) || defaultTime;
+        timeLeft = defaultTime * 60 * 1000;
         sessionElapsedTime = 0;
-        updateDisplay();
+        const minutes = Math.floor(timeLeft / 60000);
+        const seconds = Math.floor((timeLeft % 60000) / 1000);
+        timerDisplay.textContent = `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+        document.title = `StudySync AI - ${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
         startBtn.disabled = false;
         pauseBtn.disabled = true;
+        clearActive();
+        resetBtn.classList.add('active');
+        setTimeout(() => resetBtn.classList.remove('active'), 200);
+        breakSection.style.display = 'none';
     }
 
     function sendElapsedTime(increment) {
         fetch('/update_study_time', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ session_time: increment })
+            body: JSON.stringify({ session_time: Math.floor(increment / 1000) }) // Convert to seconds
         })
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-                updateTotalStudyTime(data.total_study_time);
+                updateStudyBalance(data.study_balance);
+                creditsDisplay.textContent = data.credits;
+                creditsProfileDisplay.textContent = data.credits;
             }
         })
         .catch(error => console.error('Error updating study time:', error));
     }
 
-    function resetTotalStudyTime() {
+    function resetStudyTime() {
         fetch('/reset_study_time', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' }
@@ -88,18 +129,39 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-                updateTotalStudyTime(0);
+                updateStudyBalance(0);
+                creditsDisplay.textContent = 0;
+                creditsProfileDisplay.textContent = 0;
             }
         })
         .catch(error => console.error('Error resetting study time:', error));
     }
 
+    function spendCredits() {
+        fetch('/spend_credits', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ credits: 1 })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                creditsDisplay.textContent = data.credits;
+                creditsProfileDisplay.textContent = data.credits;
+                window.location.href = '/break';
+            } else {
+                alert(data.message);
+            }
+        });
+    }
+
     startBtn.addEventListener('click', startTimer);
     pauseBtn.addEventListener('click', pauseTimer);
     resetBtn.addEventListener('click', resetTimer);
-    resetTotalBtn.addEventListener('click', resetTotalStudyTime);
+    resetTotalBtn.addEventListener('click', resetStudyTime);
+    playMinesweeperBtn.addEventListener('click', spendCredits);
 
-    updateDisplay();
-    // Set initial total study time from backend
-    updateTotalStudyTime(parseInt(totalStudyTimeDisplay.textContent.split(':').reduce((acc, time) => (60 * acc) + parseInt(time))));
+    const initialMinutes = parseInt(timerDisplay.textContent.split(':')[0]);
+    timeLeft = initialMinutes * 60 * 1000;
+    updateStudyBalance(parseInt(studyBalanceDisplay.textContent.split(':').reduce((acc, time) => (60 * acc) + parseInt(time))));
 });

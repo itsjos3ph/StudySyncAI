@@ -1,26 +1,32 @@
-/* Light mode (default) - Inspired by Pomofocus.io */
+/* Light mode (default) - Lighter grey tones */
 :root {
-    --bg-color: #f8f8f8; /* Softer off-white */
-    --text-color: #1a1a1a; /* Darker gray for readability */
-    --box-bg: #ffffff; /* White containers */
-    --border-color: #e0e0e0; /* Very subtle gray */
-    --btn-bg: #f28c38; /* Pomofocus-like pastel red-orange */
-    --btn-hover-bg: #e07b30; /* Slightly darker on hover */
+    --bg-color: #E0E0E0; /* Light grey background */
+    --text-color: #666666; /* Darker grey text */
+    --box-bg: #F0F0F0; /* Very light grey containers */
+    --border-color: #999999; /* Mid-grey borders */
+    --btn-bg: #999999; /* Mid-grey buttons */
+    --btn-hover-bg: #B0B0B0; /* Lighter grey on hover */
+    --btn-text-color: #333333; /* Dark grey for button text */
+    --btn-active-bg: #666666; /* Darker grey for active buttons */
+    --glow-color: #666666; /* Dark grey glow for light mode */
 }
 
-/* Dark mode - Adjusted to complement Pomofocus style */
+/* Dark mode - Keeping the grok.com-inspired tones */
 .dark-mode {
-    --bg-color: #1f2526; /* Darker teal-gray */
-    --text-color: #d9d9d9; /* Soft white */
-    --box-bg: #2c3435; /* Slightly lighter dark for containers */
-    --border-color: #3d4546; /* Subtle dark border */
-    --btn-bg: #f28c38; /* Keep the same button color for consistency */
-    --btn-hover-bg: #e07b30;
+    --bg-color: #2D2D2D; /* Dark grey background */
+    --text-color: #D0D0D0; /* Lighter grey text */
+    --box-bg: #383838; /* Slightly lighter grey containers */
+    --border-color: #606060; /* Mid-light grey borders */
+    --btn-bg: #606060; /* Mid-light grey buttons */
+    --btn-hover-bg: #787878; /* Lighter grey on hover */
+    --btn-text-color: #1A1A1A; /* Near-black for button text */
+    --btn-active-bg: #404040; /* Darker grey for active buttons */
+    --glow-color: #606060; /* Muted grey glow for dark mode */
 }
 
 /* Base styles */
 body {
-    font-family: 'Kumbh Sans', sans-serif; /* Pomofocus font */
+    font-family: 'Kumbh Sans', sans-serif;
     background: var(--bg-color);
     color: var(--text-color);
     margin: 0;
@@ -29,6 +35,142 @@ body {
     flex-direction: column;
     align-items: center;
     min-height: 100vh;
+    position: relative;
+}
+
+/* Welcome Page */
+.welcome-page {
+    background: linear-gradient(135deg, var(--bg-color) 0%, #D8D8D8 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.welcome-container {
+    text-align: center;
+    padding: 40px;
+    background: var(--box-bg);
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.welcome-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--btn-active-bg);
+}
+
+.welcome-subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+.welcome-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.welcome-btn {
+    padding: 12px 25px;
+    background: var(--btn-bg);
+    color: var(--btn-text-color);
+    text-decoration: none;
+    border-radius: 25px;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.welcome-btn:hover {
+    background: var(--btn-hover-bg);
+    box-shadow: 0 0 8px 2px var(--glow-color);
+}
+
+/* Auth Pages (Login & Signup) */
+.auth-page {
+    background: linear-gradient(135deg, var(--bg-color) 0%, #D8D8D8 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.auth-container {
+    background: var(--box-bg);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.auth-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: var(--btn-active-bg);
+}
+
+.auth-error {
+    color: #8B0000; /* Red velvet for errors */
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.auth-label {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    font-size: 1rem;
+}
+
+.auth-label input {
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-color);
+    color: var(--text-color);
+    font-size: 1rem;
+    margin-top: 5px;
+}
+
+.auth-btn {
+    padding: 12px;
+    border: none;
+    background: var(--btn-bg);
+    color: var(--btn-text-color);
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.auth-btn:hover {
+    background: var(--btn-hover-bg);
+    box-shadow: 0 0 8px 2px var(--glow-color);
+}
+
+.auth-link {
+    margin-top: 15px;
+    font-size: 0.9rem;
+}
+
+.auth-link a {
+    color: #8B0000;
+    text-decoration: none;
+}
+
+.auth-link a:hover {
+    text-decoration: underline;
 }
 
 /* Top Bar */
@@ -51,9 +193,10 @@ body {
     border: none;
     cursor: pointer;
     background: var(--btn-bg);
-    color: #fff;
+    color: var(--btn-text-color);
     border-radius: 20px;
     font-weight: 500;
+    font-size: 1rem;
     transition: background 0.3s ease;
 }
 
@@ -61,21 +204,43 @@ body {
     background: var(--btn-hover-bg);
 }
 
-/* Add to existing styles.css */
-.reset-total-btn {
-    padding: 6px 12px;
-    border: none;
-    background: #dc3545;
-    color: #fff;
+.break-btn, .dashboard-btn {
+    padding: 8px 16px;
+    background: var(--btn-bg);
+    color: var(--btn-text-color);
+    text-decoration: none;
     border-radius: 20px;
-    cursor: pointer;
     font-weight: 500;
+    font-size: 1rem;
     transition: background 0.3s ease;
-    margin-top: 10px;
 }
 
-.reset-total-btn:hover {
-    background: #b02a37;
+.break-btn:hover, .dashboard-btn:hover {
+    background: var(--btn-hover-bg);
+}
+
+/* Credit Notification */
+.credit-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #8B0000;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 1rem;
+    z-index: 3000;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.credit-notification.hidden {
+    display: block;
+    opacity: 0;
+}
+
+.credit-notification:not(.hidden) {
+    opacity: 1;
 }
 
 /* Profile Popout */
@@ -87,7 +252,7 @@ body {
     background: var(--box-bg);
     padding: 15px;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     z-index: 1000;
 }
 
@@ -100,82 +265,230 @@ body {
     font-size: 1.2rem;
 }
 
-.study-sessions {
+.tabs {
+    display: flex;
+    gap: 10px;
     margin-bottom: 15px;
 }
 
-.study-sessions p {
-    margin: 5px 0;
-    font-size: 0.95rem;
-}
-
-.profile-settings {
-    margin-top: 15px;
-}
-
-.notification-box {
-    max-width: 800px;
-    width: 100%;
-    margin: 0 auto 20px;
-    background: var(--box-bg);
+.tab-btn {
+    padding: 6px 12px;
+    border: none;
+    background: var(--border-color);
     color: var(--text-color);
-    padding: 10px 20px;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.tab-btn.active {
+    background: var(--btn-bg);
+    color: var(--btn-text-color);
+}
+
+.tab-btn:hover {
+    background: var(--btn-hover-bg);
+}
+
+.tab-content {
+    display: block;
+}
+
+.tab-content.hidden {
+    display: none;
+}
+
+.reset-total-btn, .convert-credits-btn {
+    padding: 6px 12px;
+    border: none;
+    background: #8B0000; /* Red velvet */
+    color: #fff;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: background 0.3s ease;
+    margin-top: 10px;
+}
+
+.reset-total-btn:hover, .convert-credits-btn:hover {
+    background: #6B0000; /* Darker red velvet on hover */
+}
+
+/* Chatbot Container */
+#chatbot-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.chatbot-btn {
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    background: var(--btn-bg);
+    color: var(--btn-text-color);
+    border-radius: 50%;
+    font-size: 1.5rem;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.chatbot-btn:hover {
+    background: var(--btn-hover-bg);
+    box-shadow: 0 0 8px 2px var(--glow-color);
+}
+
+.chatbot-popout {
+    position: absolute;
+    bottom: 60px;
+    right: 0;
+    width: 300px;
+    background: var(--box-bg);
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+.chatbot-popout.hidden {
+    display: none;
+}
+
+.chatbot-popout h3 {
+    margin: 0 0 10px;
+    font-size: 1.2rem;
+}
+
+.chatbot-messages {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
+
+.chatbot-messages p {
+    margin: 5px 0;
     font-size: 0.9rem;
+}
+
+.chatbot-form {
+    display: flex;
+    gap: 10px;
+}
+
+.chatbot-form input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-color);
+    color: var(--text-color);
+    font-size: 0.9rem;
+}
+
+.chatbot-form button {
+    padding: 8px 16px;
+    border: none;
+    background: var(--btn-bg);
+    color: var(--btn-text-color);
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.3s ease;
+}
+
+.chatbot-form button:hover {
+    background: var(--btn-hover-bg);
+}
+
+/* Break Popout */
+.break-popout {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    background: var(--box-bg);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 2000;
     text-align: center;
 }
 
+.break-popout.hidden {
+    display: none;
+}
+
+.break-popout h3 {
+    margin: 0 0 10px;
+    font-size: 1.2rem;
+}
+
+.break-popout p {
+    margin: 0 0 15px;
+    font-size: 1rem;
+}
+
+.break-popout button {
+    padding: 10px 20px;
+    border: none;
+    background: var(--btn-bg);
+    color: var(--btn-text-color);
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.3s ease;
+}
+
+.break-popout button:hover {
+    background: var(--btn-hover-bg);
+}
+
+/* Toggle Theme */
 .toggle-theme {
-    position: absolute;
-    right: 0;
     padding: 8px 16px;
     border: none;
     cursor: pointer;
     background: var(--btn-bg);
-    color: #fff;
-    border-radius: 20px; /* More rounded */
+    color: var(--btn-text-color);
+    border-radius: 20px;
     font-weight: 500;
-    transition: background 0.3s ease;
+    font-size: 1rem;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+body:not(.dark-mode) .toggle-theme {
+    box-shadow: 0 0 8px 2px var(--glow-color); /* Dark glow in light mode when not active */
 }
 
 .toggle-theme:hover {
     background: var(--btn-hover-bg);
 }
 
-/* Header */
-header.header {
-    max-width: 800px;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+.toggle-theme.active {
+    box-shadow: 0 0 8px 2px var(--glow-color); /* Glow when active */
 }
 
-.site-name {
-    font-size: 1.8rem;
-    font-weight: 700;
-}
-
-.user-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
+/* Logout Button */
 .logout-btn {
-    background: #dc3545;
+    background: #8B0000; /* Red velvet */
     color: #fff;
     padding: 6px 12px;
     text-decoration: none;
     border-radius: 20px;
     font-weight: 500;
+    font-size: 1rem;
     transition: background 0.3s ease;
 }
 
 .logout-btn:hover {
-    background: #b02a37;
+    background: #6B0000; /* Darker red velvet on hover */
 }
 
 /* Study Time Section */
@@ -186,7 +499,7 @@ header.header {
     background: var(--box-bg);
     padding: 30px;
     border-radius: 15px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     text-align: center;
 }
 
@@ -210,9 +523,9 @@ header.header {
     border-radius: 20px;
     cursor: pointer;
     background: var(--btn-bg);
-    color: #fff;
+    color: var(--btn-text-color);
     font-weight: 500;
-    transition: background 0.3s ease;
+    transition: background 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
 }
 
 .timer-buttons button:hover {
@@ -220,57 +533,52 @@ header.header {
 }
 
 .timer-buttons button:disabled {
-    background: #ccc;
+    background: var(--btn-bg); /* Normal when disabled */
     cursor: not-allowed;
+    opacity: 0.7; /* Slightly faded when not active */
 }
 
-/* Custom Time Section */
-.custom-time {
-    max-width: 450px;
-    width: 100%;
-    margin: 20px auto;
-    text-align: center;
+.timer-buttons button.active {
+    background: var(--btn-active-bg); /* Darker when active */
+    box-shadow: 0 0 8px 2px var(--glow-color); /* Glow effect */
 }
 
-#customTime {
-    padding: 10px;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    background: var(--bg-color);
-    color: var(--text-color);
+body:not(.dark-mode) .timer-buttons button.active {
+    color: #E0E0E0; /* Lighter text in light mode when active */
+}
+
+body.dark-mode .timer-buttons button.active {
+    color: #D0D0D0; /* Brighter text in dark mode when active */
+}
+
+.break-section {
+    margin-top: 20px;
+}
+
+.break-section p {
     font-size: 1rem;
-    width: 120px;
+    margin: 10px 0;
 }
 
-#setTimeBtn {
-    padding: 10px 20px;
+.break-section button {
+    padding: 8px 16px;
     border: none;
     background: var(--btn-bg);
-    color: #fff;
+    color: var(--btn-text-color);
     border-radius: 20px;
     cursor: pointer;
-    font-weight: 500;
+    margin: 0 5px;
     transition: background 0.3s ease;
 }
 
-#setTimeBtn:hover {
+.break-section button:hover {
     background: var(--btn-hover-bg);
-}
-
-/* Section Divider */
-.section-divider {
-    max-width: 800px;
-    margin: 30px auto;
-    border: none;
-    height: 1px;
-    background: var(--border-color);
 }
 
 /* Task Manager Section */
 .task-manager {
     max-width: 800px;
     width: 100%;
-    margin: 20px auto;
     text-align: center;
 }
 
@@ -278,7 +586,7 @@ header.header {
     background: var(--box-bg);
     padding: 20px;
     border-radius: 15px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
 .task-list {
@@ -301,46 +609,77 @@ header.header {
 }
 
 .task-list .empty-message {
-    color: #999;
+    color: #787878;
     font-style: italic;
 }
 
 .task-details {
     text-align: left;
+    flex: 1;
+    overflow: hidden;
 }
 
 .task-title {
     font-weight: 600;
     font-size: 1.1rem;
+    word-wrap: break-word;
+    max-width: 100%;
 }
 
 .task-due-date {
     display: block;
-    color: #757575;
+    color: #909090;
     font-size: 0.9rem;
     margin-top: 3px;
+    word-wrap: break-word;
+    max-width: 100%;
 }
 
 .task-description {
     display: block;
-    color: #8b8b8b;
+    color: #787878;
     font-size: 0.9rem;
     margin-top: 5px;
+    word-wrap: break-word;
+    max-width: 100%;
 }
 
-.task-list button {
-    background: #dc3545;
-    color: #fff;
-    border: none;
+.task-actions {
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.edit-btn {
     padding: 6px 12px;
+    border: none;
+    background: var(--btn-bg);
+    color: var(--btn-text-color);
     border-radius: 20px;
     cursor: pointer;
     font-weight: 500;
+    font-size: 1rem;
+    transition: background 0.3s ease;
+}
+
+.edit-btn:hover {
+    background: var(--btn-hover-bg);
+}
+
+.task-list button {
+    padding: 6px 12px;
+    border: none;
+    background: #8B0000; /* Red velvet */
+    color: #fff;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 1rem;
     transition: background 0.3s ease;
 }
 
 .task-list button:hover {
-    background: #b02a37;
+    background: #6B0000; /* Darker red velvet */
 }
 
 .task-form {
@@ -357,7 +696,7 @@ header.header {
     padding: 10px;
     border: 1px solid var(--border-color);
     border-radius: 8px;
-    background: var(--bg-color);
+    background: var(--box-bg);
     color: var(--text-color);
     font-size: 1rem;
     min-width: 120px;
@@ -368,7 +707,7 @@ header.header {
     padding: 10px 20px;
     border: none;
     background: var(--btn-bg);
-    color: #fff;
+    color: var(--btn-text-color);
     border-radius: 20px;
     cursor: pointer;
     font-weight: 500;
@@ -379,6 +718,71 @@ header.header {
     background: var(--btn-hover-bg);
 }
 
+/* Edit Task Popout */
+.edit-task-popout {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 350px;
+    background: var(--box-bg);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 2000;
+}
+
+.edit-task-popout.hidden {
+    display: none;
+}
+
+.edit-task-popout h3 {
+    margin: 0 0 15px;
+    font-size: 1.2rem;
+}
+
+.edit-task-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.edit-task-form input[type="text"],
+.edit-task-form input[type="date"],
+.edit-task-form input[type="time"] {
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-color);
+    color: var(--text-color);
+    font-size: 1rem;
+}
+
+.edit-task-form button {
+    padding: 10px;
+    border: none;
+    background: var(--btn-bg);
+    color: var(--btn-text-color);
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.3s ease;
+}
+
+.edit-task-form button:hover {
+    background: var(--btn-hover-bg);
+}
+
+.edit-task-form button[type="button"] {
+    background: #8B0000; /* Red velvet for Cancel */
+    color: #fff;
+}
+
+.edit-task-form button[type="button"]:hover {
+    background: #6B0000; /* Darker red velvet */
+}
+
+/* Sort Form */
 .sort-form {
     margin-top: 10px;
     display: flex;
@@ -395,7 +799,7 @@ header.header {
     padding: 8px;
     border: 1px solid var(--border-color);
     border-radius: 8px;
-    background: var(--bg-color);
+    background: var(--box-bg);
     color: var(--text-color);
 }
 
@@ -403,7 +807,7 @@ header.header {
     padding: 8px 16px;
     border: none;
     background: var(--btn-bg);
-    color: #fff;
+    color: var(--btn-text-color);
     border-radius: 20px;
     cursor: pointer;
     font-weight: 500;
@@ -412,4 +816,195 @@ header.header {
 
 .sort-form button:hover {
     background: var(--btn-hover-bg);
+}
+
+/* Break Page */
+.break-page {
+    max-width: 1200px;
+    width: 100%;
+    margin: 20px auto;
+    background: var(--box-bg);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.break-page h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: var(--btn-active-bg);
+}
+
+body.dark-mode .break-page h2 {
+    color: #D0D0D0; /* Brighter in dark mode */
+}
+
+.game-options {
+    margin: 20px 0;
+}
+
+.game-btn {
+    padding: 10px 20px;
+    border: none;
+    background: var(--btn-bg);
+    color: var(--btn-text-color);
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: background 0.3s ease;
+}
+
+.game-btn:hover {
+    background: var(--btn-hover-bg);
+}
+
+/* Difficulty Popout */
+.difficulty-popout {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2000;
+}
+
+.difficulty-popout.hidden {
+    display: none;
+}
+
+.difficulty-box {
+    background: #C0C0C0; /* Classic Windows grey */
+    border-top: 2px solid #FFFFFF;
+    border-left: 2px solid #FFFFFF;
+    border-bottom: 2px solid #808080;
+    border-right: 2px solid #808080;
+    padding: 10px;
+    width: 300px;
+    text-align: center;
+    font-family: 'MS Sans Serif', sans-serif;
+}
+
+.difficulty-box h3 {
+    font-size: 1.2rem;
+    margin: 0 0 10px;
+    color: #000000;
+    background: #000080; /* Windows title bar blue */
+    color: #FFFFFF;
+    padding: 2px 5px;
+    border-top: 1px solid #FFFFFF;
+    border-left: 1px solid #FFFFFF;
+    border-bottom: 1px solid #808080;
+    border-right: 1px solid #808080;
+}
+
+.difficulty-btn {
+    display: block;
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+    border: 1px outset #FFFFFF;
+    background: #C0C0C0;
+    color: #000000;
+    cursor: pointer;
+    font-family: 'MS Sans Serif', sans-serif;
+    font-size: 1rem;
+    transition: background 0.3s ease;
+}
+
+.difficulty-btn:hover {
+    background: #D7D7D7;
+}
+
+.minesweeper-container.hidden {
+    display: none;
+}
+
+.minesweeper-box {
+    background: #C0C0C0; /* Classic Windows grey */
+    border-top: 2px solid #FFFFFF;
+    border-left: 2px solid #FFFFFF;
+    border-bottom: 2px solid #808080;
+    border-right: 2px solid #808080;
+    padding: 10px;
+    font-family: 'MS Sans Serif', sans-serif;
+    color: #000000;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.minesweeper-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.05),
+        rgba(0, 0, 0, 0.05) 2px,
+        transparent 2px,
+        transparent 4px
+    );
+    pointer-events: none;
+    z-index: 1;
+}
+
+.minesweeper-header {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    background: #000080; /* Windows title bar blue */
+    color: #FFFFFF;
+    padding: 2px 5px;
+    border-top: 1px solid #FFFFFF;
+    border-left: 1px solid #FFFFFF;
+    border-bottom: 1px solid #808080;
+    border-right: 1px solid #808080;
+    position: relative;
+    z-index: 2;
+}
+
+.minesweeper-board {
+    display: grid;
+    background: #C0C0C0;
+    padding: 5px;
+    border: 2px inset #808080;
+    position: relative;
+    z-index: 2;
+}
+
+.minesweeper-cell {
+    background: #C0C0C0;
+    border: 2px outset #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    user-select: none;
+}
+
+.minesweeper-cell.revealed {
+    background: #D7D7D7;
+    border: 1px solid #808080;
+}
+
+.minesweeper-cell.mine {
+    background: #FF0000;
+    color: #000000;
+}
+
+.minesweeper-cell.flagged {
+    background: #C0C0C0;
+}
+
+.minesweeper-cell:hover:not(.revealed):not(.flagged) {
+    background: #E0E0E0;
 }

@@ -5,20 +5,24 @@
     <title>Sign Up - StudySync AI</title>
     <link rel="stylesheet" href="/static/styles.css">
 </head>
-<body>
-    <h1>Sign Up</h1>
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% for message in messages %}
-                <p>{{ message }}</p>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-    <form method="POST">
-        <label>Username: <input type="text" name="username" required></label><br>
-        <label>Password: <input type="password" name="password" required></label><br>
-        <input type="submit" value="Sign Up">
-    </form>
-    <p>Already have an account? <a href="{{ url_for('login') }}">Login</a></p>
+<body class="auth-page">
+    <div class="auth-container">
+        <h1 class="auth-title">Sign Up</h1>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <p class="auth-error">{{ messages[-1] }}</p>
+            {% endif %}
+        {% endwith %}
+        <form method="POST" class="auth-form">
+            <label class="auth-label">Username: 
+                <input type="text" name="username" required placeholder="Your username">
+            </label>
+            <label class="auth-label">Password: 
+                <input type="password" name="password" required placeholder="••••••••">
+            </label>
+            <button type="submit" class="auth-btn">Sign Up</button>
+        </form>
+        <p class="auth-link">Already have an account? <a href="{{ url_for('login') }}">Login</a></p>
+    </div>
 </body>
 </html>
