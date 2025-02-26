@@ -5,6 +5,7 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import logging
+from transformers import AutoTokenizer, AutoModelForCausalLM
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -21,6 +22,10 @@ if app.config['SQLALCHEMY_DATABASE_URI'].startswith('postgres://'):
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
+
+# Load local transformers model
+tokenizer = AutoTokenizer.from_pretrained("distilgpt2")
+model = AutoModelForCausalLM.from_pretrained("distilgpt2")
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -170,7 +175,7 @@ def update_study_time():
 @login_required
 def convert_credits():
     user = User.query.get(current_user.id)
-    credits_to_add = user.study_balance // (25 * 60)  # 25 minutes = 1 credit
+    credits_to_add = user.study_balance // (25 * 60)
     if credits_to_add > 0:
         user.credits += credits_to_add
         user.study_balance -= credits_to_add * 25 * 60
@@ -195,7 +200,7 @@ def spend_credits():
 @login_required
 def reset_study_time():
     user = User.query.get(current_user.id)
-    user.study_balance = 0  # Only reset study balance
+    user.study_balance = 0
     db.session.commit()
     return jsonify({'status': 'success', 'study_balance': 0, 'credits': user.credits})
 
@@ -203,6 +208,42 @@ def reset_study_time():
 @login_required
 def break_page():
     return render_template('break.html', credits=current_user.credits)
+
+@app.route('/chatbot', methods=['POST'])
+@login_required
+def chatbot():
+    data = request.get_json()
+    user_message = data.get('message', '')
+    if not user_message:
+        return jsonify({'status': 'error', 'message': 'No message provided'})
+
+    try:
+        # Dynamic prompt based on subject
+        if 'math' in user_message.lower():
+            prompt = f"You are an AI Study Buddy specializing in math. Provide clear, helpful answers.\nUser: {user_message}\nAI:"
+        elif 'biology' in user_message.lower():
+            prompt = f"You are an AI Study Buddy specializing in biology. Provide clear, helpful answers.\nUser: {user_message}\nAI:"
+        else:
+            prompt = f"You are an AI Study Buddy here to assist with studying and tasks. Provide clear, helpful answers.\nUser: {user_message}\nAI:"
+        
+        inputs = tokenizer(prompt, return_tensors="pt")
+        outputs = model.generate(
+            inputs['input_ids'],
+            max_new_tokens=150,
+            min_length=20,
+            temperature=0.7,
+            top_p=0.9,
+            do_sample=True,
+            pad_token_id=tokenizer.eos_token_id
+        )
+        ai_response = tokenizer.decode(outputs[0], skip_special_tokens=True)[len(prompt):].strip()
+        logger.debug(f"Generated response: {ai_response}")
+        if not ai_response:
+            ai_response = "I’m here to help with your studies! Could you give me more details?"
+        return jsonify({'status': 'success', 'response': ai_response})
+    except Exception as e:
+        logger.error(f"Error with local model: {str(e)}")
+        return jsonify({'status': 'error', 'message': 'Sorry, I couldn’t process that right now.'})
 
 @app.route('/logout', methods=['GET', 'POST'])
 @login_required

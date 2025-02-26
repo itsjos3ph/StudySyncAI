@@ -48,18 +48,6 @@
         </div>
     </div>
 
-    <div id="chatbot-container">
-        <button id="chatbot-btn" class="chatbot-btn">🤖</button>
-        <div id="chatbot-popout" class="chatbot-popout hidden">
-            <h3>AI Study Buddy</h3>
-            <div id="chatbot-messages" class="chatbot-messages"></div>
-            <form id="chatbot-form" class="chatbot-form">
-                <input type="text" id="chatbot-input" placeholder="Ask me anything about your tasks or assignments...">
-                <button type="submit">Send</button>
-            </form>
-        </div>
-    </div>
-
     <div id="break-popout" class="break-popout hidden"></div>
 
     <div id="credit-notification" class="credit-notification hidden">Not enough time, study more!</div>
@@ -143,11 +131,6 @@
         const editButtons = document.querySelectorAll('.edit-btn');
         const editPopout = document.getElementById('edit-task-popout');
         const cancelEditBtn = document.getElementById('cancel-edit');
-        const chatbotBtn = document.getElementById('chatbot-btn');
-        const chatbotPopout = document.getElementById('chatbot-popout');
-        const chatbotForm = document.getElementById('chatbot-form');
-        const chatbotInput = document.getElementById('chatbot-input');
-        const chatbotMessages = document.getElementById('chatbot-messages');
         const convertCreditsBtn = document.getElementById('convert-credits-btn');
         const creditNotification = document.getElementById('credit-notification');
 
@@ -181,23 +164,6 @@
         });
 
         cancelEditBtn.addEventListener('click', () => editPopout.classList.add('hidden'));
-
-        chatbotBtn.addEventListener('click', () => chatbotPopout.classList.toggle('hidden'));
-
-        chatbotForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const message = chatbotInput.value.trim();
-            if (message) {
-                const userMsg = document.createElement('p');
-                userMsg.textContent = `You: ${message}`;
-                chatbotMessages.appendChild(userMsg);
-                const aiMsg = document.createElement('p');
-                aiMsg.textContent = `AI: I’d love to help! For now, imagine I say something smart about "${message}". Try asking about task priorities or assignment tips!`;
-                chatbotMessages.appendChild(aiMsg);
-                chatbotInput.value = '';
-                chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-            }
-        });
 
         convertCreditsBtn.addEventListener('click', () => {
             fetch('/convert_credits', {
